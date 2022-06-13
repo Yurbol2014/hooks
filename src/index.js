@@ -1,12 +1,25 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import ReactDOM from 'react-dom';
 
+const MyContext = React.createContext();
 
-const App = () => 
-   <p>Hi</p>
+const App = () => {
+   return (
+   <MyContext.Provider value= 'Hello 123'>
+      <Child/>
+   </MyContext.Provider>
+   );
+};
+  
+const Child = () => {
+   const value = useContext(MyContext);
+  
+         return <p>{value}</p>
+            
+
+}
 
 
-//ReactDOM.render(<App/>, document.getElementById('root'))
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,4 +27,3 @@ root.render(
     <App />
   </React.StrictMode>
 );
-
