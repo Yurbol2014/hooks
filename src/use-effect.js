@@ -38,20 +38,20 @@ const App = () => {
 //}
 
 
-const Notification = () => {
-   const [hay, setHay] = useState(true);
-   useEffect(()=>{
-     const timeout = setTimeout(()=> setHay(false), 2500);
-     return () => clearTimeout(timeout);// устранение утечки памяти
-   },[])
-   return (<div>{hay && <p>Hello</p>}</div>)
-}
+//const Notification = () => {
+//   const [hay, setHay] = useState(true);
+//   useEffect(()=>{
+//     const timeout = setTimeout(()=> setHay(false), 2500);
+//     return () => clearTimeout(timeout);// устранение утечки памяти
+//   },[])
+//   return (<div>{hay && <p>Hello</p>}</div>)
+//}
 
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+//const root = ReactDOM.createRoot(document.getElementById('root'));
+//root.render(
+//  <React.StrictMode>
+//    <App />
+//  </React.StrictMode>
+//);
 
