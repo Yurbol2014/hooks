@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from "react";
+import React,{useState, useEffect, useCallback, useMemo} from "react";
 import ReactDOM from 'react-dom/client';
 
 const App = () => {
@@ -15,8 +15,9 @@ const App = () => {
             <button
                onClick={()=> setVisible(false)}>hide
             </button>
-           
-         <PlanetInfo id = {value}/>
+            
+           <PlanetInfo id  = {value}/> 
+    
          </div>
       )
    } else {
@@ -28,31 +29,73 @@ const App = () => {
 
 };
 
-const usePlanetInfo = (id) => {
-   const [name, setName] = useState(null)
-   useEffect(()=> {
-      let cancelled = false;
-      fetch(`https://swapi.dev/api/planets/${id}`)
-      .then(res => res.json())
-      .then(data => !cancelled && setName(data.name));
-      return ()=> cancelled = true;
-   }, [id])
+const getPlanet = (id) => {
+   return fetch(`https://swapi.dev/api/planets/${id}`)
+   .then(res => res.json())
+   .then(data => data);
+}
 
-   return name;
+const useRequest = (request) =>{
+
+   const initialState = useMemo(()=>( {
+      data: null,
+      loading: true,
+      error: null
+   }),[]);
+
+   const [dataState, setDataState] = useState(initialState)
+  
+   
+   useEffect(()=> {
+      setDataState(initialState)
+      let cancelled = false;
+      request()
+      .then(data => !cancelled && setDataState({
+         data,
+         loading: false,
+         error: null
+      }))
+      .catch(error => !cancelled && setDataState({
+         data: null,
+         loading:false,
+         error
+      }))
+      return ()=> cancelled = true;
+   }, [request, initialState])
+
+   return dataState;
+   
+}
+
+const usePlanetInfo = (id) => {
+   
+   const request = useCallback(
+      () => getPlanet(id),[id]
+   ) ;
+   return useRequest(request)
 }
 
 const PlanetInfo = ({id}) => {
+const {data, loading,error} = usePlanetInfo(id);
 
- const name = usePlanetInfo(id)
-
- 
-
-   return (
-      <div> {id} - {name}</div>
-   )
+if (error) {
+   return <did> Something is wrong</did>
+}
+if(loading) {
+   return <div> loading... </div>
 }
 
 
+return (
+<div>
+   {id}-{data.name}
+</div>
+
+
+)
+
+ 
+}
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -61,3 +104,4 @@ root.render(
     <App />
   </React.StrictMode>
 );
+   
